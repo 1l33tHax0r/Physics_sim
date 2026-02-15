@@ -1,9 +1,7 @@
-def signal(x,y,z,sx,sy,sz,navilo):
-    """
-    x = self, y=self, z=self
-    sx = from sensor, sy= from sensor, sz = from sensor
-    navilo = navigation law
-    
-    """
+import numpy as np
 
-    
+def plane(v1,v2):
+    proj = (v1@v2/(v1@v1))*v1
+    v_plane = v2-(v2@v1)*v1
+    return v_plane
+

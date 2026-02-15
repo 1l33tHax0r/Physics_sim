@@ -16,7 +16,7 @@ def main():
     
     state_vector =   [0,0,111,0,0,20,0,0,0,0,0,0] #3 positionals, 3 velocity,3 angles, 3 angular
     #theta is pitch, phi is yaw
-    m_state_vector = [0,0,112,0,0,0,0,0,0,0,0,0]
+    m_state_vector = [0,0,1,0,0,1,0,0,0,0,0,0]
     
     
     

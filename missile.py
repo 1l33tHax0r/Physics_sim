@@ -1,5 +1,6 @@
 import numpy as np
 import sensor
+from math import sin, cos
 
 class Missile:
     missile_list=[]
@@ -7,6 +8,7 @@ class Missile:
         
         self.X = np.array(x,dtype=float) #x,y,z,vx,vy,vz...
         self.mass = mass
+        self.moment = moment
         self.thrust = thrust
         self.call=permitted_forces
         self.call['thrust'] = ()
@@ -18,11 +20,44 @@ class Missile:
         return (self.X.copy())
 
     def measure(self,target):
-        measurement = sensor.getfrom_sensor(target,self)
+        measurement = sensor.distance_sensor(target,self)
         return measurement
     
+    def complex_measure(self,target):
+
+        measurement = sensor.map_sensor(target,self)
+        return measurement
+    
+
+    def local_axis(self,y):
+
+        x=self.x[0:3]/np.linalg.norm(self.x[0:3])
+        y=y/np.linalg.norm(y)
+        z = np.cross(x,y)
+        return (x,y,z)
+
+    def complex_thrust(self,signal,kp,kd,dt=0.01):
+
+        reference = [0,0,0]
+        own_axis = self.local_axis(signal)
+        v,y,z = own_axis
+        T_hat_def = -v
+        error_s = signal-reference
+
+        
+
+        P = signal*kp
+
+
+
+
+
     def simple_thrust(self,signal,kp,kd,dt=0.01):
         
+        
+
+
+
         thrust_signal = signal*kp+kd*(signal-kd)/dt
         print(thrust_signal)
         if thrust_signal < 0:
