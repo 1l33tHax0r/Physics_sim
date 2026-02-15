@@ -1,5 +1,5 @@
 import numpy as np
-
+from math import sin, cos
 class InvalidInputError(Exception):
 
     pass
@@ -31,11 +31,58 @@ def Force_help():
 
 
 
+def gravity(obj):
+
+        return np.array([0,0,-obj.mass*9.81])
+
+def lift(obj,k,coeff):
+    F=np.zeros(3)
+    V=obj.X[3:6]
+    vel=np.linalg.norm(V)
+    
+    if vel!=0:
+        v_vec=V/vel
+        up = [0,0,1]
+        v_interim = np.cross(v_vec,up)
+        interim_norm = np.linalg.norm(v_interim)
+        if interim_norm < 1e-8:
+            
+            L_hat= -v_vec
+            L = (k*coeff*vel**2)*L_hat
+            F+=L
+        else:
+            L_hat = np.cross(v_interim,v_vec)
+            L = (k*coeff*vel**2)*L_hat/np.linalg.norm(L_hat)
+            F+=L
+    
+    return F
+
+
+def drag(obj,k,coeff):
+    
+    F=np.zeros(3)
+
+    V=obj.X[3:6]        
+    vel=np.linalg.norm(V)
+    
+    if vel!=0:
+    
+        dirh=-V/vel
+        D=k*vel**2
+        D_dir=dirh*D
+        F+=D_dir
+
+    return F
 
 
 
-
-
+def thrust(obj, thrust):
+    theta = obj.X[6]
+    phi = obj.X[7]
+    F=np.array([sin(theta)*cos(phi),sin(phi)*sin(theta),cos(theta)])*thrust
+    if any(x>0 for x in F):
+        print(f"THRUSTING: \nOBJ:{obj}\nTHRUST:{F}")
+    return F
 
 
 
@@ -53,63 +100,19 @@ def assemble_forces(obj, callable):
     
         
 
-    def gravity(obj):
-
-        return np.array([0,0,-obj.mass*9.81])
-
-    def lift(obj,k,coeff):
-        F=np.zeros(3)
-        V=obj.X[3:6]
-        
-        V=np.array(V,dtype=float)
-        
-        vel=(V@V)**(1/2)
-        
-        if vel!=0:
-            v_vec=V/vel
-            up = [0,0,1]
-            v_interim = np.cross(v_vec,up)
-            interim_norm = np.linalg.norm(v_interim)
-            if interim_norm < 1e-8:
-                
-                L_hat= -v_vec
-                L = (k*coeff*vel**2)*L_hat
-                F+=L
-            else:
-                L_hat = np.cross(v_interim,v_vec)
-                L = (k*coeff*vel**2)*L_hat
-                F+=L
-        
-        return F
-
-
-    def drag(obj,k,coeff):
-        
-        F=np.zeros(3)
-
-        V=obj.X[3:6]
-        
-        V=np.array(V,dtype=float)
-        
-        vel=(V@V)**(1/2)
-        
-        if vel!=0:
-        
-            dirh=-V/vel
-            D=k*vel**2
-            D_dir=dirh*D
-            F+=D_dir
-
-        return F
+    
     #returns drag force as k, which represents the 1/2 p r Cd A part
     
     ret = np.zeros(3)
 
-    func_dict = {'drag': drag, 'lift': lift, 'gravity': gravity}
+    func_dict = {'drag': drag, 'lift': lift, 'gravity': gravity, 'thrust': thrust}
 
     for to_call in callable.keys():
         args = callable[to_call]
+
         ret+=func_dict[to_call](*(obj,*args))
     
+    
+
     return ret
 

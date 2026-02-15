@@ -3,25 +3,26 @@
 from target import Rocket
 import physics as phy
 import quick_grapher as gph
+import sys
 from missile import Missile
 
 def main():
     
 
     aero = (0.1,0.1)
-    call={'drag': aero,
+    bare_minimum_forces={'drag': aero,
         'lift': aero,
          'gravity': ()}
     
-    state_vector =   [0,0,10,0,0,100,0,0,0,0,0,0] #3 positionals, 3 velocity,3 angles, 3 angular
+    state_vector =   [0,0,111,0,0,20,0,0,0,0,0,0] #3 positionals, 3 velocity,3 angles, 3 angular
     #theta is pitch, phi is yaw
-    m_state_vector = [0,0,10,0,0,100,0,0,0,0,0,0]
+    m_state_vector = [0,0,112,0,0,0,0,0,0,0,0,0]
     
-    T=1
-    M=1
-
-    target_rocket = Rocket(state_vector,mass=1)
-    missile = Missile(m_state_vector,mass=2)
+    
+    
+    target_rocket = Rocket(state_vector,mass=1,permitted_forces=bare_minimum_forces.copy())
+    
+    missile = Missile(m_state_vector,mass=2,permitted_forces=bare_minimum_forces.copy())
     
     bundle=[]
     time_values = []
@@ -33,8 +34,8 @@ def main():
 
     def sim_loop():
             
-        t = 0
-        dt = phy.set_dt()
+        t=0
+        dt = phy.set_dt(0.01)
 
         while True:
 
@@ -42,11 +43,25 @@ def main():
 
             for index, obj in enumerate(objects):
                 
-                result = phy.acceleration(obj, call)
+                if isinstance(obj,Missile):
+                    M=missile.measure(target_rocket)
+                    missile.simple_thrust(M[2],kp=0.1,kd=0.05,dt=0.01)
+                result = phy.step(obj, obj.call,dt)
+                
+            
+                
                 if result == 1:
                     exit_flag = True
+                if result ==2:
+                    errorexit = int(input("Error deteced: 0 to exit to graph, 1 to exit program:\n>>>"))
+                    if errorexit==0:
+                        exit_flag = True
+                    else:
+                        sys.exit()
 
-            
+                
+
+                    
             for index, obj in enumerate(objects):
                 bundle[index].append(obj.return_values())
 

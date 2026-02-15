@@ -1,19 +1,23 @@
-import random as rd
-import time
-rd.seed()
-noise = rd.randint(1,10)/rd.randint(1,100)
+import numpy as np
 
 
-
-def getfrom_sensor(x,y,z):
+def getfrom_sensor(obj1,obj2):
     
-    noise = rd.randint(1,10)/rd.randint(1,100)
-    x+= rd.randint(1,10)/rd.randint(1,100)
-    y+=rd.randint(1,10)/rd.randint(1,100)
-    z+= rd.randint(1,10)/rd.randint(1,100)
+    target=obj1.X
+    missile = obj2.X
 
-    return (x,y,z)
+    difference = target[0:3] - missile[0:3]
+    sigma = 1 # meters
+    noise = np.random.normal(0, sigma, size=3)
+
+    measured = difference + noise
+
+
+    print(f"+-----------+\n    BEEP\ndifference: {measured}\ncheating! Noise: {noise}+-----------+\n\n\n")
+    
+    return measured
+
+    
 
 
 
-print(getfrom_sensor(10,10,1000))
