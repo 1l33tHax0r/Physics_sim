@@ -34,7 +34,7 @@ phys_libs/
   Constantgen.py        moment of inertia for the two-segment rod
   Rotator_module.py     RK4 step of Euler's rigid-body equations
   atmosphere.py         ICAO/ISA temperature, pressure, density to 47 km
-  linalg_utils.py       skew, Rodrigues helpers, unit vectors, LQR solve
+  linalg_utils.py       skew, Rodrigues helpers, unit vectors
   grapher.py            matplotlib animation of a completed engagement
   PiTorque.py          quick torque generator, kept for simplicity in case of many forces
 ```
