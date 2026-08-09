@@ -17,7 +17,7 @@ airframe rotates first and translates as a consequence.
 python physics_engine.py
 ```
 
-Requires `numpy`, `scipy`, and `matplotlib`. Run from the repository root. Modules are imported as `from phys_libs import ...`.
+Requires `numpy` and `matplotlib`. Run from the repository root. Modules are imported as `from phys_libs import ...`.
 
 The run prints a short summary and then opens two live animations (see [Output](#output)). Close both windows to exit.
 
